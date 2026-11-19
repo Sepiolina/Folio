@@ -1,0 +1,1739 @@
+# PROJECT SPECIFICATION
+# Minimalist Desktop Browser & Document Workspace
+
+**Project Type:** Cross-platform Desktop Application  
+**Application Stack:** React + TypeScript + Tauri 2  
+**Product Vision:** A lightweight browser, Markdown workspace, and professional PDF application in one minimalist desktop app.
+
+---
+
+# 1. ROLE & DEVELOPMENT OBJECTIVE
+
+You are a senior desktop application engineer, software architect, and UI/UX designer.
+
+Your task is to design and build a polished, lightweight desktop application using React, TypeScript, and Tauri 2.
+
+The application combines three major products into one:
+
+1. A minimalist desktop web browser.
+2. A Markdown reader and editor.
+3. A professional PDF reader and editor capable of replacing Foxit PDF Reader for everyday and many advanced document workflows.
+
+The application should combine the best design principles of lightweight browsers and document applications without directly copying their interfaces.
+
+The primary inspiration is:
+
+- Min Browser — lightweight and minimalist browsing.
+- Zen Browser — clean, distraction-free browsing.
+- Arc Browser — thoughtful workspace and tab organization.
+- Firefox — reliable browsing capabilities.
+- Obsidian — Markdown editing and reading.
+- Foxit PDF Reader — professional PDF functionality.
+- Adobe Acrobat — advanced PDF tools and document workflows.
+- macOS Preview — simple and intuitive document viewing.
+
+The goal is not to build a bloated application.
+
+The goal is to deliver a fast, elegant, reliable, and feature-rich desktop workspace with a small footprint and an excellent user experience.
+
+**Important development philosophy:**
+
+Build real, functional features. Do not create decorative UI elements that do nothing. Do not simulate browser navigation or PDF editing. All core interactions must be connected to working implementations.
+
+Before making architectural decisions, inspect the existing project repository and its current structure. Reuse existing working code where appropriate instead of unnecessarily rewriting everything.
+
+---
+
+# 2. TECHNOLOGY STACK
+
+Use the following technologies.
+
+## Frontend
+
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- shadcn/ui
+- Lucide Icons
+
+## Desktop Framework
+
+- Tauri 2
+- Rust for native functionality and system integration.
+
+## State Management
+
+- Zustand for application state.
+- React hooks for local component state.
+
+## Browser
+
+- Tauri WebView capabilities.
+- Native webview instances for browsing external websites.
+- A separate privileged React application window for the browser interface.
+
+## Markdown
+
+- react-markdown
+- remark-gfm
+- CodeMirror 6 for Markdown editing.
+- Syntax highlighting.
+- Custom Markdown renderer.
+
+## PDF
+
+- Mozilla PDF.js for PDF rendering.
+- pdf-lib for supported PDF modifications and document creation.
+- A dedicated annotation layer.
+- A suitable additional library or implementation for PDF image export.
+- A suitable cryptographic PDF library or native implementation for digital signatures.
+
+## File Management
+
+- Tauri filesystem plugin.
+- Tauri dialog plugin.
+- Tauri Store plugin.
+- SQLite for structured persistent data when needed.
+
+## Image Export
+
+- Canvas rendering.
+- JSZip for ZIP archive creation.
+- Tauri filesystem APIs for saving to selected directories.
+
+## Architecture Principles
+
+- Prefer lightweight dependencies.
+- Avoid redundant libraries.
+- Separate native functionality from UI logic.
+- Keep modules independent.
+- Use TypeScript types throughout.
+- Use Rust for operations where native performance or filesystem integration is beneficial.
+- Lazy-load large modules.
+
+Do not install unnecessary dependencies without justification.
+
+---
+
+# 3. PRODUCT STRUCTURE
+
+The application has three primary modes.
+
+## A. Browser
+
+For regular web browsing.
+
+Supported content:
+- Websites.
+- HTML.
+- CSS.
+- JavaScript.
+- Modern web applications.
+- Local HTML files.
+
+## B. Markdown
+
+For reading and editing Markdown documents.
+
+Supported files:
+- .md
+- .markdown
+
+## C. PDF Studio
+
+For professional PDF reading, annotation, editing, organization, and exporting.
+
+Supported files:
+- .pdf
+
+All three modes should share a unified tab system, toolbar language, theme system, and application layout.
+
+Users should be able to switch between websites, Markdown documents, and PDFs without opening separate applications.
+
+---
+
+# 4. APPLICATION UI & DESIGN DIRECTION
+
+The interface is one of the most important parts of this project.
+
+Create an extremely minimalist desktop interface that prioritizes content over controls.
+
+It should look modern, clean, calm, and professional.
+
+## 4.1 Overall Design
+
+Design principles:
+
+- Minimalist.
+- Lightweight.
+- Content-focused.
+- Clean typography.
+- Compact navigation.
+- Subtle borders.
+- Subtle animations.
+- Neutral colors.
+- No excessive gradients.
+- No oversized buttons.
+- No unnecessary shadows.
+- No excessive visual decoration.
+
+Use negative space effectively.
+
+The application should feel like a native desktop application rather than a website running inside a desktop window.
+
+## 4.2 Main Application Layout
+
+### Top Navigation Bar
+
+Include:
+
+- Back.
+- Forward.
+- Reload.
+- Address/search bar.
+- Bookmark.
+- Tab controls.
+- New tab button.
+- Window controls.
+
+The address bar should support both URL navigation and search queries.
+
+### Tabs
+
+Support different content types in the same tab system:
+
+- Website tab.
+- Local HTML tab.
+- Markdown tab.
+- PDF tab.
+
+Each tab should display:
+
+- Page title or document filename.
+- Favicon or appropriate file icon.
+- Loading indicator.
+- Close button.
+- Unsaved changes indicator for documents.
+
+Allow users to:
+
+- Open new tabs.
+- Close tabs.
+- Switch tabs.
+- Reorder tabs.
+- Restore recently closed tabs.
+- Restore previous sessions.
+
+### Optional Sidebar
+
+The sidebar should be collapsible and hidden by default unless needed.
+
+Possible sidebar sections:
+
+- Bookmarks.
+- History.
+- Downloads.
+- Recent files.
+- PDF thumbnails.
+- Document outline.
+- PDF annotations.
+- Search results.
+
+The sidebar should adapt to the current application mode.
+
+For example:
+- Browser mode displays browsing-related sections.
+- Markdown mode displays the document outline.
+- PDF mode displays thumbnails, outline, and annotations.
+
+### Main Content Area
+
+The content should occupy as much available screen space as possible.
+
+Avoid unnecessary toolbars and permanent panels.
+
+Use contextual toolbars that appear when relevant.
+
+---
+
+# 5. THEMING
+
+Support three appearance modes:
+
+1. Light mode.
+2. Dark mode.
+3. Follow system theme.
+
+Dark mode must be properly designed rather than simply inverting colors.
+
+Requirements:
+
+- Comfortable reading contrast.
+- Neutral background colors.
+- Proper text contrast.
+- Distinct active tab states.
+- Subtle borders.
+- Carefully selected highlight colors.
+- Consistent colors across browser, Markdown, and PDF interfaces.
+
+Allow users to configure the accent color if practical.
+
+Remember the user's theme preference across application restarts.
+
+---
+
+# 6. WEB BROWSER MODULE
+
+Build a functional lightweight browser.
+
+## 6.1 Browsing Features
+
+Support:
+
+- Opening websites.
+- URL navigation.
+- Search engine integration.
+- Back and forward navigation.
+- Reload.
+- Stop loading.
+- Home.
+- Multiple tabs.
+- Tab switching.
+- Tab closing.
+- Bookmark management.
+- Browsing history.
+- Private browsing mode.
+- Download management.
+- Context menus.
+- Page zoom.
+- Keyboard shortcuts.
+- Session restoration.
+
+Support modern HTML, CSS, JavaScript, and web applications to the extent supported by the underlying system WebView.
+
+## 6.2 Browser Architecture
+
+Do not render external websites by downloading HTML and inserting it into React.
+
+Implement a proper browsing architecture using native Tauri/WebView capabilities.
+
+Requirements:
+
+- External websites should render inside browser webview instances.
+- Browser content should be isolated from the privileged React application.
+- Multiple tabs should have appropriately managed webview instances.
+- Tabs should support navigation lifecycle events.
+- Handle loading and navigation errors.
+- Avoid unnecessarily loading inactive tabs.
+- Manage webview resources when tabs are closed.
+- Prevent arbitrary access to application filesystem permissions.
+
+Tauri uses the operating system's webview rather than shipping a full Chromium browser.
+
+Respect this architectural limitation.
+
+Do not promise Chrome-equivalent browser functionality where the underlying engine cannot provide it.
+
+## 6.3 Address Bar
+
+The address bar should:
+
+- Accept full URLs.
+- Automatically handle common URL input.
+- Search when the input is not a URL.
+- Display the current page address.
+- Support keyboard focus shortcuts.
+- Provide basic suggestions from history and bookmarks.
+- Clearly indicate secure HTTPS connections.
+
+Allow the user to select a default search engine.
+
+Suggested search engines:
+- Google.
+- DuckDuckGo.
+- Bing.
+- Custom search URL.
+
+## 6.4 Bookmarks and History
+
+Implement:
+
+- Add bookmark.
+- Remove bookmark.
+- Edit bookmark.
+- Organize bookmarks.
+- Bookmark folders.
+- Recently visited pages.
+- Search browsing history.
+- Clear history.
+- Persistent local storage.
+
+## 6.5 Downloads
+
+Provide:
+
+- Download progress.
+- Download filename.
+- File size where available.
+- Download location.
+- Cancel downloads.
+- Open downloaded files.
+- Open containing folder.
+- Download history.
+
+---
+
+# 7. LOCAL FILE SUPPORT
+
+Allow users to open files directly from the operating system.
+
+Supported formats:
+
+| File type | Supported functionality |
+|---|---|
+| .html | Open and render |
+| .htm | Open and render |
+| .css | View source or edit as text |
+| .js | View source or edit as text |
+| .md | Read and edit |
+| .markdown | Read and edit |
+| .pdf | Read and edit supported content |
+
+Additional requirements:
+
+- Native file picker.
+- Drag and drop.
+- Recent files.
+- Open with keyboard shortcut.
+- Save.
+- Save As.
+- Reopen previous documents.
+- Remember recently opened document sessions.
+
+For local HTML files, use an appropriate secure loading architecture.
+
+Do not give locally opened content unrestricted access to the application's privileged commands or filesystem.
+
+---
+
+# 8. MARKDOWN READER & EDITOR
+
+Build an integrated Markdown reading and editing experience inspired by Obsidian.
+
+## 8.1 Supported Features
+
+- Open local Markdown files.
+- Render Markdown.
+- Edit Markdown.
+- Save changes to the original file.
+- Save As.
+- Reading mode.
+- Editing mode.
+- Live preview.
+- Split editor and preview.
+- Syntax highlighting.
+- GitHub Flavored Markdown.
+- Tables.
+- Task lists.
+- Images.
+- Links.
+- Code blocks.
+- Blockquotes.
+- Headings.
+- Nested lists.
+- Table of contents.
+- Find within document.
+- Keyboard shortcuts.
+
+## 8.2 Editor Experience
+
+Use CodeMirror 6 or an equivalent lightweight editor.
+
+Requirements:
+
+- Syntax highlighting.
+- Line numbers when appropriate.
+- Automatic indentation.
+- Search and replace.
+- Undo and redo.
+- Word wrapping.
+- Keyboard shortcuts.
+- Unsaved changes indicator.
+- Configurable editor font size.
+- Configurable line height.
+
+## 8.3 Reading Experience
+
+The reading mode should feature:
+
+- Comfortable typography.
+- Proper heading hierarchy.
+- Clean code block presentation.
+- Readable tables.
+- Consistent spacing.
+- Image scaling.
+- Clickable links.
+- Optional table of contents.
+- Distraction-free reading mode.
+
+Allow local linked images and attachments to render safely when possible.
+
+## 8.4 Saving
+
+Ensure that Markdown editing actually updates the local file.
+
+Handle:
+
+- File permissions.
+- Save errors.
+- Unsaved changes.
+- External file modifications where possible.
+- Save conflicts.
+- Save As.
+
+Never silently discard user changes.
+
+---
+
+# 9. PDF STUDIO — PROFESSIONAL PDF APPLICATION
+
+This is a major part of the project.
+
+The PDF module should be powerful enough to function as a practical alternative to Foxit PDF Reader for daily professional use.
+
+Do not build a basic PDF viewer with only a few annotation features.
+
+Build a complete PDF workspace.
+
+The PDF functionality should prioritize:
+
+- Reading.
+- Reviewing.
+- Annotating.
+- Form filling.
+- Signing.
+- Editing supported content.
+- Managing pages.
+- Merging and splitting.
+- Converting to images.
+- Exporting.
+- Printing.
+- Document security.
+
+## 9.1 PDF Viewer
+
+Support:
+
+- Opening local PDF files.
+- PDF.js rendering.
+- Page navigation.
+- Page thumbnails.
+- Search within PDF.
+- Text selection.
+- Copy text.
+- Zoom in.
+- Zoom out.
+- Fit page.
+- Fit width.
+- Custom zoom.
+- Single-page mode.
+- Continuous scrolling.
+- Two-page spread.
+- Cover-page display mode.
+- Page rotation.
+- Fullscreen.
+- Presentation mode.
+- Document outline.
+- PDF bookmarks.
+- Document information.
+- PDF metadata.
+- Print.
+- Page range printing.
+- Password-protected PDF opening.
+- Large document support.
+
+Provide a smooth reading experience.
+
+Use lazy page rendering and virtualization where appropriate.
+
+## 9.2 PDF Annotation
+
+Provide a dedicated annotation toolbar.
+
+Supported annotation tools:
+
+- Text highlight.
+- Underline.
+- Strikethrough.
+- Squiggly underline.
+- Freehand drawing.
+- Pencil.
+- Eraser.
+- Text box.
+- Sticky notes.
+- Comments.
+- Lines.
+- Arrows.
+- Rectangles.
+- Circles.
+- Stamps.
+- Area highlighting.
+
+Annotation customization:
+
+- Color.
+- Opacity.
+- Thickness.
+- Font size.
+- Text formatting.
+- Fill color.
+- Border color.
+
+Annotation management:
+
+- Select annotations.
+- Move annotations.
+- Resize annotations.
+- Delete annotations.
+- Edit annotation properties.
+- Undo.
+- Redo.
+- Navigate between annotations.
+- Show all annotations in a sidebar.
+- Search annotations where practical.
+
+Preserve annotations when saving and reopening PDFs.
+
+Use PDF-native annotations where possible rather than flattening everything into page images.
+
+## 9.3 PDF Editing
+
+Provide practical PDF editing functions.
+
+Features:
+
+- Add text to PDF pages.
+- Insert images.
+- Insert signatures.
+- Add shapes.
+- Move inserted elements.
+- Resize inserted elements.
+- Delete supported objects.
+- Add new pages.
+- Delete pages.
+- Reorder pages.
+- Rotate pages.
+- Duplicate pages.
+- Extract pages.
+- Crop pages.
+- Merge PDFs.
+- Split PDFs.
+- Add headers.
+- Add footers.
+- Add page numbers.
+- Add watermarks.
+- Edit document metadata.
+- Optimize PDF file size where supported.
+
+Important technical distinction:
+
+There is a difference between:
+1. Adding content on top of a PDF page.
+2. Modifying existing PDF text and objects.
+
+Do not claim that arbitrary existing PDF content can be edited if the implementation only supports text overlays.
+
+Investigate the appropriate PDF libraries and additional implementations required for more advanced editing.
+
+Preserve original documents unless users explicitly choose to overwrite them.
+
+## 9.4 PDF Forms
+
+Support interactive PDF forms.
+
+Features:
+
+- AcroForm fields.
+- Text fields.
+- Checkboxes.
+- Radio buttons.
+- Dropdown lists.
+- Date fields where supported.
+- Form validation where defined.
+- Save completed forms.
+- Edit existing fields.
+- Export completed forms.
+- Flatten forms when exporting.
+
+Support keyboard navigation between form fields.
+
+Show required and invalid fields where PDF form metadata supports these states.
+
+## 9.5 PDF Signatures
+
+Support two different signature types.
+
+### Visual Signatures
+
+- Draw a signature.
+- Upload a signature image.
+- Save reusable signatures.
+- Insert a signature into any page.
+- Move and resize signatures.
+- Export signed documents.
+
+### Cryptographic Digital Signatures
+
+Where technically feasible, support:
+
+- Certificate-based signing.
+- Digital signature verification.
+- Certificate inspection.
+- Signature validity status.
+- Signing timestamps.
+- Certificate chain information.
+
+Do not confuse a signature image with a cryptographic digital signature.
+
+Clearly communicate the difference to users.
+
+## 9.6 PDF Document Security
+
+Support:
+
+- Opening password-protected PDFs.
+- Inspecting document permissions.
+- Handling encrypted PDFs.
+- Password-protected PDF export.
+- Export permission settings.
+- Digital signature verification.
+- Displaying signature and certificate status.
+
+Respect document restrictions and clearly communicate unsupported operations.
+
+Do not silently strip document security.
+
+---
+
+# 10. PDF TO IMAGE EXPORT
+
+This feature is particularly important.
+
+Users must be able to convert viewed PDF documents into images and export them either as a ZIP archive or directly into a folder.
+
+Build a proper PDF-to-image export workflow.
+
+## 10.1 Supported Image Formats
+
+Support:
+
+- PNG.
+- JPEG/JPG.
+
+PNG should be the default because it provides lossless image export.
+
+JPEG should be available for smaller image files.
+
+## 10.2 Export Scope
+
+Allow users to choose:
+
+- All pages.
+- Current page.
+- Selected pages.
+- Custom page ranges.
+
+Examples of page range syntax:
+
+- 1-5
+- 1,3,5
+- 1-5,8,10-12
+
+Validate the page selection before export.
+
+## 10.3 Export Resolution
+
+Provide the following options:
+
+- 72 DPI.
+- 150 DPI.
+- 200 DPI.
+- 300 DPI.
+- 600 DPI.
+- Custom DPI where practical.
+
+Default resolution: 300 DPI.
+
+Preserve the original page aspect ratio.
+
+Do not stretch or distort pages.
+
+Provide an optional estimated output size where practical.
+
+## 10.4 Output Destinations
+
+Support two primary export destinations.
+
+### Option A: Export as ZIP
+
+Generate individual images for each selected PDF page.
+
+Package all generated images into a single ZIP archive.
+
+Example:
+
+Document.pdf becomes:
+
+Document.zip
+- Document_page_001.png
+- Document_page_002.png
+- Document_page_003.png
+- Document_page_004.png
+
+Requirements:
+
+- Use JSZip or an equivalent solution.
+- Maintain correct page ordering.
+- Use sequential filenames.
+- Preserve image quality.
+- Avoid unnecessary image compression for PNG.
+- Allow users to select the ZIP output location.
+- Handle large documents efficiently.
+
+### Option B: Export to Folder
+
+Allow users to choose a destination directory using the native operating system folder picker.
+
+Export individual image files directly into that directory.
+
+Example:
+
+Document/
+- Document_page_001.png
+- Document_page_002.png
+- Document_page_003.png
+- Document_page_004.png
+
+Requirements:
+
+- Use native Tauri filesystem APIs.
+- Create the output directory when appropriate.
+- Avoid overwriting existing files without permission.
+- Display the selected destination.
+- Offer an action to open the resulting folder.
+
+## 10.5 PDF Image Export Dialog UI
+
+Design a compact, professional export dialog.
+
+Include:
+
+**Image Format**
+- PNG.
+- JPEG.
+
+**Page Selection**
+- All pages.
+- Current page.
+- Custom range.
+
+**Resolution**
+- 72 DPI.
+- 150 DPI.
+- 200 DPI.
+- 300 DPI.
+- 600 DPI.
+- Custom.
+
+**Destination**
+- ZIP archive.
+- Selected folder.
+
+**Filename Pattern**
+- Document_page_001.png.
+
+**JPEG Quality**
+- Configurable quality slider when JPEG is selected.
+
+**Export Actions**
+- Export.
+- Cancel.
+
+## 10.6 Export Progress
+
+During export, show:
+
+- Number of pages to export.
+- Current page.
+- Progress percentage.
+- Progress bar.
+- Cancel operation.
+- Completion notification.
+- Output location.
+- Open folder action.
+
+Example:
+
+Exporting PDF pages...
+
+Page 45 of 120
+
+37.5% complete
+
+Do not freeze the user interface during export.
+
+## 10.7 Performance Requirements
+
+Large documents can contain hundreds or thousands of pages.
+
+Implement image export efficiently.
+
+Requirements:
+
+- Render one page at a time or use controlled concurrency.
+- Avoid rendering all pages into memory simultaneously.
+- Release canvas and temporary resources after each page.
+- Use streaming or incremental output techniques where practical.
+- Handle cancellation.
+- Handle errors during rendering.
+- Avoid application crashes caused by memory exhaustion.
+- Preserve image quality.
+
+For ZIP export, use a memory-conscious approach appropriate to document size. Do not assume that holding every image in memory is acceptable.
+
+---
+
+# 11. PDF BATCH TOOLS
+
+Provide a dedicated PDF utilities area.
+
+Features:
+
+### Batch Conversion
+
+- Multiple PDFs to PNG.
+- Multiple PDFs to JPEG.
+- Multiple PDFs to ZIP archives.
+
+### Batch Organization
+
+- Merge multiple PDFs.
+- Split PDFs.
+- Extract selected pages.
+- Rotate pages.
+- Reorder pages.
+
+### Batch Optimization
+
+- Compress PDFs where supported.
+- Optimize image-heavy PDFs.
+- Compare output size before and after processing.
+
+### Batch Management
+
+- Drag and drop multiple PDF files.
+- File queue.
+- Remove files from queue.
+- Progress status.
+- Cancel operations.
+- Error reporting.
+- Open output directory.
+
+Keep batch tools separate from ordinary browsing.
+
+---
+
+# 12. PDF USER INTERFACE
+
+The PDF workspace should feel like a professional PDF application, with the simplicity of macOS Preview.
+
+## 12.1 PDF Toolbar
+
+Create a compact toolbar with contextual tools.
+
+Suggested tools:
+
+**Navigation**
+- Thumbnails.
+- Outline.
+- Search.
+- Page navigation.
+
+**Annotation**
+- Select.
+- Highlight.
+- Underline.
+- Strikethrough.
+- Draw.
+- Text.
+- Note.
+- Shapes.
+
+**Editing**
+- Edit content.
+- Add image.
+- Add signature.
+- Add text.
+
+**Document**
+- Organize pages.
+- Merge.
+- Split.
+- Extract.
+- Rotate.
+- Crop.
+
+**Export**
+- Save.
+- Export PDF.
+- Export as images.
+- Print.
+
+Do not show every tool simultaneously.
+
+Group related features into menus, popovers, or contextual toolbars.
+
+## 12.2 PDF Sidebar
+
+Provide an optional collapsible sidebar.
+
+Sidebar sections:
+
+- Page thumbnails.
+- Document outline.
+- Bookmarks.
+- Annotations.
+- Search results.
+- Attachments where supported.
+
+The sidebar should be hidden by default when not required.
+
+## 12.3 PDF Canvas
+
+The PDF page should be centered in the available workspace.
+
+Use a neutral canvas background.
+
+Support:
+- Continuous scroll.
+- Page shadows used sparingly.
+- Smooth zoom.
+- Smooth page navigation.
+- Responsive resizing.
+
+When the user enters annotation mode, display the appropriate contextual toolbar.
+
+---
+
+# 13. FILE MANAGEMENT
+
+Implement an integrated file management experience.
+
+Features:
+
+- Native open dialog.
+- Native save dialog.
+- Native folder selection.
+- Drag and drop.
+- Recent files.
+- Recent documents.
+- Recent PDFs.
+- Recently edited files.
+- Session restoration.
+- Reopen closed tabs.
+- File-type icons.
+- Unsaved changes indicators.
+
+Supported files include:
+
+- HTML.
+- HTM.
+- CSS.
+- JS.
+- MD.
+- MARKDOWN.
+- PDF.
+
+Provide reliable saving and recovery functionality.
+
+For documents being edited, maintain a clear distinction between the original file and exported copies.
+
+---
+
+# 14. APPLICATION SETTINGS
+
+Create a clean settings interface.
+
+## General
+
+- Startup behavior.
+- Restore previous session.
+- Default home page.
+- Default download location.
+- Default zoom.
+
+## Appearance
+
+- Light mode.
+- Dark mode.
+- System theme.
+- Accent color.
+- Interface density.
+- Font preferences.
+
+## Browser
+
+- Default search engine.
+- Homepage.
+- Privacy preferences.
+- Download behavior.
+- History management.
+
+## Markdown
+
+- Default editor mode.
+- Editor font.
+- Font size.
+- Line height.
+- Word wrap.
+- Live preview preference.
+
+## PDF
+
+- Default zoom.
+- Default page layout.
+- Continuous scrolling preference.
+- Default export format.
+- Default export DPI.
+- Default image destination behavior.
+- Remember last PDF sidebar state.
+
+## Keyboard Shortcuts
+
+Provide a shortcuts reference and configurable shortcuts where practical.
+
+---
+
+# 15. KEYBOARD SHORTCUTS
+
+Implement common keyboard shortcuts.
+
+| Shortcut | Action |
+|---|---|
+| Ctrl/Cmd + T | New tab |
+| Ctrl/Cmd + W | Close tab |
+| Ctrl/Cmd + Shift + T | Reopen closed tab |
+| Ctrl/Cmd + Tab | Next tab |
+| Ctrl/Cmd + Shift + Tab | Previous tab |
+| Ctrl/Cmd + L | Focus address bar |
+| Ctrl/Cmd + O | Open file |
+| Ctrl/Cmd + S | Save current document |
+| Ctrl/Cmd + Shift + S | Save As |
+| Ctrl/Cmd + F | Find |
+| Ctrl/Cmd + Plus | Zoom in |
+| Ctrl/Cmd + Minus | Zoom out |
+| Ctrl/Cmd + 0 | Reset zoom |
+| Ctrl/Cmd + P | Print |
+| Escape | Exit fullscreen or close active dialog |
+
+Additional PDF shortcuts should be implemented where appropriate.
+
+Avoid conflicting with common operating system shortcuts.
+
+Use platform-aware shortcuts for Windows, macOS, and Linux.
+
+---
+
+# 16. PERFORMANCE
+
+Performance is a core product requirement.
+
+The application should be lightweight and responsive.
+
+Requirements:
+
+- Fast startup.
+- Low idle CPU consumption.
+- Reasonable memory usage.
+- Efficient tab management.
+- Lazy loading.
+- Virtualized rendering.
+- No unnecessary background processes.
+- No excessive React re-renders.
+- Optimized state management.
+- Efficient PDF rendering.
+- Efficient image export.
+- Responsive UI during long-running operations.
+
+Do not keep unnecessary webviews alive.
+
+Avoid rendering inactive tabs when possible.
+
+Do not preload all PDF pages.
+
+Use Rust/native functionality where it meaningfully improves performance or reliability.
+
+Measure performance rather than assuming an implementation is lightweight.
+
+---
+
+# 17. SECURITY & PRIVACY
+
+Security is especially important because this application handles both external websites and local files.
+
+Follow Tauri 2 security recommendations.
+
+Requirements:
+
+- Restrictive Tauri capabilities.
+- Principle of least privilege.
+- Separate privileged frontend from external web content.
+- No arbitrary filesystem access from websites.
+- Secure handling of local files.
+- Validate file paths.
+- Sanitize Markdown HTML.
+- Handle untrusted document content safely.
+- Prevent unintended local file access.
+- Protect application settings.
+- Avoid unnecessary telemetry.
+- Keep document processing local where possible.
+
+Do not expose native application commands to external websites.
+
+Do not allow downloaded files to execute automatically.
+
+Clearly distinguish website content from local application UI.
+
+---
+
+# 18. DATA STORAGE
+
+Use persistent local storage.
+
+Possible architecture:
+
+**SQLite**
+- Browsing history.
+- Bookmarks.
+- Recent files.
+- Application metadata.
+- User preferences where appropriate.
+
+**Tauri Store**
+- Small configuration values.
+- Theme preferences.
+- Window settings.
+
+**Filesystem**
+- Original documents.
+- Edited documents.
+- Downloads.
+- Exported PDFs.
+- Exported images.
+
+Avoid storing large documents directly in SQLite.
+
+Provide a clear local-data policy.
+
+The application should work offline for local Markdown and PDF documents.
+
+---
+
+# 19. SUGGESTED PROJECT STRUCTURE
+
+Use modular architecture.
+
+Example:
+
+src/
+  components/
+    app/
+    layout/
+    tabs/
+    toolbar/
+    sidebar/
+    browser/
+    markdown/
+    pdf/
+    dialogs/
+    settings/
+    common/
+
+  pages/
+    HomePage.tsx
+    SettingsPage.tsx
+
+  features/
+    browser/
+      components/
+      hooks/
+      services/
+      types/
+
+    markdown/
+      components/
+      hooks/
+      services/
+      types/
+
+    pdf/
+      components/
+        PdfViewer/
+        PdfToolbar/
+        PdfSidebar/
+        PdfAnnotations/
+        PdfForms/
+        PdfEditor/
+        PdfExport/
+        PdfBatchTools/
+
+      hooks/
+      services/
+      utils/
+      types/
+
+  stores/
+    appStore.ts
+    tabStore.ts
+    browserStore.ts
+    settingsStore.ts
+
+  services/
+    fileService.ts
+    downloadService.ts
+    storageService.ts
+
+  hooks/
+  utils/
+  types/
+
+src-tauri/
+  src/
+    commands/
+    filesystem/
+    browser/
+    pdf/
+    storage/
+
+  capabilities/
+  permissions/
+
+Adjust this structure when implementation needs justify a different organization.
+
+Avoid excessive fragmentation.
+
+---
+
+# 20. DEVELOPMENT ROADMAP
+
+Implement incrementally.
+
+Do not attempt to implement everything in one large, untested change.
+
+## PHASE 1 — Project Foundation
+
+- Inspect repository.
+- Set up or verify Tauri 2.
+- Configure React, TypeScript, and Vite.
+- Establish Tailwind and shadcn/ui.
+- Build the main application window.
+- Create the minimalist design system.
+- Implement light and dark themes.
+- Implement window controls.
+- Implement application state.
+- Implement tab management.
+
+Deliverable: A working desktop application foundation.
+
+## PHASE 2 — Browser
+
+- Implement native webview architecture.
+- Implement browser tabs.
+- Implement URL navigation.
+- Implement browser controls.
+- Implement search integration.
+- Implement bookmarks.
+- Implement history.
+- Implement downloads.
+- Implement session restoration.
+
+Deliverable: Functional lightweight browser.
+
+## PHASE 3 — Markdown
+
+- Implement local file opening.
+- Implement Markdown rendering.
+- Implement CodeMirror editor.
+- Implement live preview.
+- Implement reading mode.
+- Implement saving.
+- Implement Save As.
+- Implement search.
+- Implement recent files.
+
+Deliverable: Functional Markdown reader/editor.
+
+## PHASE 4 — PDF Viewer
+
+- Integrate PDF.js.
+- Implement PDF rendering.
+- Implement page navigation.
+- Implement thumbnails.
+- Implement zoom.
+- Implement search.
+- Implement continuous scrolling.
+- Implement fullscreen.
+- Implement document outline.
+- Implement printing.
+- Implement password-protected PDF opening where supported.
+
+Deliverable: High-quality PDF reader.
+
+## PHASE 5 — PDF Annotation & Forms
+
+- Highlighting.
+- Underline.
+- Strikethrough.
+- Freehand drawing.
+- Sticky notes.
+- Comments.
+- Text boxes.
+- Shapes.
+- Undo and redo.
+- Annotation sidebar.
+- Interactive form filling.
+- Save annotations.
+
+Deliverable: Professional PDF reviewing experience.
+
+## PHASE 6 — PDF Editing & Organization
+
+- Add text.
+- Insert images.
+- Add signatures.
+- Add and remove pages.
+- Reorder pages.
+- Rotate pages.
+- Extract pages.
+- Merge PDFs.
+- Split PDFs.
+- Crop pages.
+- Add watermarks.
+- Add headers and footers.
+- Modify supported PDF content.
+
+Deliverable: Practical PDF editing and organization.
+
+## PHASE 7 — PDF Export
+
+- PNG export.
+- JPEG export.
+- DPI configuration.
+- Page selection.
+- ZIP archive export.
+- Direct folder export.
+- Progress tracking.
+- Export cancellation.
+- Large document handling.
+- Open output folder.
+
+Deliverable: Complete PDF-to-image workflow.
+
+## PHASE 8 — Batch Tools
+
+- Batch PDF conversion.
+- Batch PDF merging.
+- Batch page extraction.
+- Batch splitting.
+- Batch image export.
+- Batch compression where supported.
+
+Deliverable: PDF utilities workspace.
+
+## PHASE 9 — Polish & Optimization
+
+- Performance profiling.
+- Memory optimization.
+- Security audit.
+- Error handling.
+- Recovery.
+- Keyboard shortcuts.
+- Accessibility.
+- Cross-platform testing.
+- Packaging.
+
+Deliverable: Production-ready application.
+
+---
+
+# 21. TESTING & QUALITY REQUIREMENTS
+
+Every major feature must be tested.
+
+## Browser Tests
+
+- Open website.
+- Navigate backward and forward.
+- Open multiple tabs.
+- Close tabs.
+- Restore tabs.
+- Load modern websites.
+- Handle loading errors.
+- Download files.
+- Open local HTML files safely.
+
+## Markdown Tests
+
+- Open Markdown files.
+- Render Markdown correctly.
+- Edit content.
+- Save modifications.
+- Save As.
+- Render tables and code blocks.
+- Handle local images.
+- Recover unsaved changes.
+
+## PDF Tests
+
+Test with:
+
+- Small PDFs.
+- Large PDFs.
+- Scanned PDFs.
+- Image-heavy PDFs.
+- Password-protected PDFs.
+- Interactive forms.
+- PDFs containing annotations.
+- PDFs containing bookmarks.
+- Multi-page documents.
+- PDFs with unusual page dimensions.
+
+Test:
+
+- Zoom.
+- Page navigation.
+- Search.
+- Highlighting.
+- Annotations.
+- Form filling.
+- Saving.
+- Exporting.
+- Printing.
+
+## PDF Image Export Tests
+
+Verify:
+
+- PNG image output.
+- JPEG image output.
+- All-page export.
+- Single-page export.
+- Custom page ranges.
+- 72 DPI.
+- 150 DPI.
+- 300 DPI.
+- 600 DPI.
+- ZIP export.
+- Folder export.
+- Filename ordering.
+- Correct page dimensions.
+- Output image quality.
+- Cancellation.
+- Large-document performance.
+- Existing file conflict handling.
+
+## Cross-Platform
+
+Target:
+
+- Windows.
+- macOS.
+- Linux.
+
+Respect platform-specific WebView limitations.
+
+Do not claim a feature works on every platform until it has been verified there.
+
+---
+
+# 22. ACCEPTANCE CRITERIA
+
+The project is considered successful when:
+
+### Browser
+
+- Users can browse ordinary websites.
+- Multiple tabs work.
+- Navigation works.
+- Bookmarks and history persist.
+- Downloads work.
+- The browser interface is minimalist.
+
+### Markdown
+
+- Users can open Markdown files.
+- Users can read Markdown files.
+- Users can edit Markdown files.
+- Users can save changes.
+- Live preview works.
+
+### PDF
+
+- Users can open and read PDFs.
+- Navigation and search work.
+- Annotations work.
+- Forms can be filled.
+- Supported PDF edits can be saved.
+- Pages can be organized.
+- PDFs can be merged and split.
+- Documents can be printed.
+- Users can add visual signatures.
+- Digital signature features, if implemented, are clearly distinguished from visual signatures.
+
+### PDF Image Export
+
+- Users can export all PDF pages as PNG or JPEG.
+- Users can export selected pages.
+- Users can configure DPI.
+- Users can export to ZIP.
+- Users can export directly to a folder.
+- Progress is displayed.
+- The application remains responsive.
+- Large documents are handled without excessive memory usage.
+
+### Application
+
+- Themes work.
+- Tabs work across all content types.
+- Recent documents persist.
+- The application opens quickly.
+- The application is stable.
+- Local documents work offline.
+- Core UI controls perform real actions.
+
+---
+
+# 23. IMPORTANT DEVELOPMENT INSTRUCTIONS FOR CLAUDE
+
+Follow these instructions throughout the project.
+
+## Before Coding
+
+1. Inspect the existing repository.
+2. Understand the existing framework and dependencies.
+3. Identify existing working features.
+4. Identify technical risks.
+5. Propose the architecture.
+6. Identify any library limitations, especially around PDF editing and Tauri webviews.
+7. Create a practical implementation plan.
+
+Do not blindly overwrite existing project files.
+
+## During Development
+
+- Implement features incrementally.
+- Maintain a working application.
+- Use reusable components.
+- Write clean TypeScript.
+- Keep Rust commands modular.
+- Avoid unnecessary dependencies.
+- Handle errors properly.
+- Test features as they are implemented.
+- Keep the visual design consistent.
+- Do not leave broken interactions.
+- Do not implement fake buttons.
+- Do not replace working functionality with mockups.
+- Do not claim functionality is complete when it is not.
+
+For any feature that cannot be fully supported by the selected libraries, investigate alternatives and explain the limitation before making an implementation decision.
+
+## UI Development
+
+Prioritize polish and consistency.
+
+The application should not look like a generic admin dashboard.
+
+Avoid:
+- Oversized cards.
+- Excessive gradients.
+- Unnecessary panels.
+- Excessive rounded containers.
+- Large empty dashboard sections.
+- Unnecessary animations.
+
+The UI should feel like a sophisticated, minimal desktop application.
+
+## Implementation Reporting
+
+After each phase, report:
+
+- What was implemented.
+- Which files were created or modified.
+- Which functionality is working.
+- Which tests were performed.
+- Any known limitations.
+- What remains incomplete.
+
+Maintain a development checklist.
+
+Do not mark a feature completed until it has been implemented and tested.
+
+---
+
+# 24. FINAL PRODUCT VISION
+
+Build a minimalist desktop application that brings together the functionality of:
+
+- Min Browser.
+- Zen Browser.
+- Obsidian.
+- Foxit PDF Reader.
+- macOS Preview.
+
+The final application should have three equally important pillars:
+
+**1. Browser**
+
+A fast, lightweight, minimalist browsing experience.
+
+**2. Markdown**
+
+A beautiful, distraction-free Markdown reader and editor.
+
+**3. PDF Studio**
+
+A powerful professional PDF workspace with viewing, annotation, form filling, editing, page organization, signatures, image conversion, and batch export.
+
+The defining philosophy is:
+
+**Minimalist interface. Powerful functionality. Lightweight architecture. Local-first document workflows.**
+
+The application should feel like a lightweight browser that happens to be an excellent document workspace, rather than an office suite trying to become a browser.
+
+The end result should be a polished, dependable desktop application suitable for daily use on Windows, macOS, and Linux.
+
+---
+
+# 25. START HERE
+
+Begin by inspecting the existing repository.
+
+Do not immediately generate the entire application in one step.
+
+First:
+
+1. Analyze the current codebase.
+2. Identify the existing configuration and dependencies.
+3. Present the proposed architecture.
+4. Identify technical limitations and potential implementation challenges.
+5. Create a phased implementation checklist.
+6. Start implementing Phase 1.
+
+Keep the application runnable throughout development.
+
+Make sensible engineering decisions without repeatedly asking for confirmation about routine implementation details.
+
+The most important priorities are actual functionality, reliability, minimalist design, security, and performance.
+
+**Build the real application, not just the concept or prototype.**

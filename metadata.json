@@ -1,0 +1,6 @@
+{
+  "name": "Folio — Minimalist Browser, Markdown & PDF Studio",
+  "description": "A lightweight unified workspace combining a minimalist web browser, CodeMirror Markdown editor, and professional PDF studio with annotation, page organization, and high-DPI image export.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

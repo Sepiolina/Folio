@@ -1,0 +1,287 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --font-display: var(--font-plus-jakarta), system-ui, -apple-system, sans-serif;
+  --font-body: var(--font-dm-sans), system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --surface-canvas: #f7f7f8;
+  --surface-chrome: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-subtle: #efeff1;
+  --surface-pdf-desk: #e6e7ea;
+  --border-hairline: rgba(15, 23, 42, 0.09);
+  --border-strong: rgba(15, 23, 42, 0.16);
+  --text-primary: #111318;
+  --text-secondary: #4b5563;
+  --text-muted: #717680;
+  --accent-color: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, 0.12);
+}
+
+.dark {
+  --surface-canvas: #18181b;
+  --surface-chrome: #1f1f23;
+  --surface-elevated: #252529;
+  --surface-subtle: #2b2b30;
+  --surface-pdf-desk: #141417;
+  --border-hairline: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.15);
+  --text-primary: #f1f2f4;
+  --text-secondary: #b4b7c0;
+  --text-muted: #7f8490;
+  --accent-color: #60a5fa;
+  --accent-soft: rgba(96, 165, 250, 0.16);
+}
+
+[data-accent="slate"] {
+  --accent-color: #475569;
+  --accent-soft: rgba(71, 85, 105, 0.14);
+}
+.dark[data-accent="slate"] {
+  --accent-color: #94a3b8;
+  --accent-soft: rgba(148, 163, 184, 0.16);
+}
+[data-accent="indigo"] {
+  --accent-color: #4f46e5;
+  --accent-soft: rgba(79, 70, 229, 0.12);
+}
+.dark[data-accent="indigo"] {
+  --accent-color: #818cf8;
+  --accent-soft: rgba(129, 140, 248, 0.16);
+}
+[data-accent="emerald"] {
+  --accent-color: #059669;
+  --accent-soft: rgba(5, 150, 105, 0.12);
+}
+.dark[data-accent="emerald"] {
+  --accent-color: #34d399;
+  --accent-soft: rgba(52, 211, 153, 0.16);
+}
+[data-accent="amber"] {
+  --accent-color: #d97706;
+  --accent-soft: rgba(217, 119, 6, 0.12);
+}
+.dark[data-accent="amber"] {
+  --accent-color: #fbbf24;
+  --accent-soft: rgba(251, 191, 36, 0.16);
+}
+[data-accent="rose"] {
+  --accent-color: #e11d48;
+  --accent-soft: rgba(225, 29, 72, 0.12);
+}
+.dark[data-accent="rose"] {
+  --accent-color: #fb7185;
+  --accent-soft: rgba(251, 113, 133, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background-color: var(--surface-canvas);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+}
+
+code, pre, kbd, .font-mono {
+  font-family: var(--font-mono);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Custom subtle scrollbars for desktop workspace feel */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 140, 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 140, 0.42);
+}
+
+/* Markdown Reading Prose (Obsidian-inspired clean typography) */
+.markdown-prose {
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 15.5px;
+  max-width: 72ch;
+}
+.markdown-prose h1 {
+  font-family: var(--font-display);
+  font-size: 1.95rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  margin-top: 1.5rem;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--border-hairline);
+}
+.markdown-prose h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  margin-top: 1.75rem;
+  margin-bottom: 0.7rem;
+}
+.markdown-prose h3 {
+  font-family: var(--font-display);
+  font-size: 1.18rem;
+  font-weight: 600;
+  margin-top: 1.35rem;
+  margin-bottom: 0.5rem;
+}
+.markdown-prose h4,
+.markdown-prose h5,
+.markdown-prose h6 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.1rem;
+  margin-bottom: 0.4rem;
+}
+.markdown-prose p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+.markdown-prose a {
+  color: var(--accent-color);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.markdown-prose ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.markdown-prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.markdown-prose li {
+  margin-bottom: 0.3rem;
+}
+.markdown-prose li input[type="checkbox"] {
+  margin-right: 0.5rem;
+  accent-color: var(--accent-color);
+}
+.markdown-prose blockquote {
+  margin: 1rem 0;
+  padding: 0.65rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-hairline);
+  background: var(--surface-subtle);
+  color: var(--text-secondary);
+}
+.markdown-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--surface-subtle);
+  padding: 0.15em 0.38em;
+  border-radius: 4px;
+}
+.markdown-prose pre {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  background: var(--surface-subtle);
+  border: 1px solid var(--border-hairline);
+  border-radius: 0.5rem;
+  padding: 0.9rem 1rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+.markdown-prose pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+.markdown-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+}
+.markdown-prose th,
+.markdown-prose td {
+  border: 1px solid var(--border-hairline);
+  padding: 0.45rem 0.75rem;
+  text-align: left;
+}
+.markdown-prose th {
+  background: var(--surface-subtle);
+  font-weight: 600;
+}
+.markdown-prose mark {
+  background-color: rgba(250, 204, 21, 0.35);
+  color: inherit;
+  padding: 0.08em 0.25em;
+  border-radius: 3px;
+}
+.markdown-prose hr {
+  border: none;
+  border-top: 1px solid var(--border-hairline);
+  margin: 1.5rem 0;
+}
+.markdown-prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-hairline);
+  margin: 0.75rem 0;
+}
+
+/* PDF.js Text Layer styling */
+.pdf-text-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  line-height: 1;
+  text-size-adjust: none;
+  forced-color-adjust: none;
+  transform-origin: 0 0;
+  user-select: text;
+}
+.pdf-text-layer span {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+.pdf-text-layer ::selection {
+  background: rgba(59, 130, 246, 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
